@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/thoas/picfit/constants"
 )
 
 // Parse the expires query arg and return true if the expiration date is valid
@@ -13,12 +14,12 @@ import (
 // Will return true if the expiration time is after the curnnet time
 // Will return false otherwise
 func VerifyExpires(qs map[string]interface{}) bool {
-	_, expiresSet := qs["expires"]
+	_, expiresSet := qs[constants.ExpiresParamName]
 	if !expiresSet {
 		return true
 	}
 
-	expires, _ := strconv.ParseInt(qs["expires"].(string), 10, 64)
+	expires, _ := strconv.ParseInt(qs[constants.ExpiresParamName].(string), 10, 64)
 	if time.Now().Unix() < expires {
 		return true
 	}
