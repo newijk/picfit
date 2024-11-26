@@ -64,6 +64,7 @@ func KeyParser() gin.HandlerFunc {
 		sorted := setParamsFromURLValues(queryString, c.Request.URL.Query())
 		delete(sorted, constants.SigParamName)
 		delete(sorted, constants.ForceParamName)
+		delete(sorted, constants.ExpiresParamName)
 
 		if len(sorted) != 0 {
 			serialized := hash.Serialize(sorted)
