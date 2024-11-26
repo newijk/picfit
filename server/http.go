@@ -147,6 +147,7 @@ func (s *HTTPServer) Init() error {
 			middleware.ParametersParser(),
 			middleware.KeyParser(),
 			middleware.Security(s.config.SecretKey),
+			middleware.Expiry(),
 			middleware.URLParser(s.config.Options.MimetypeDetector, s.processor),
 			middleware.OperationParser(),
 			middleware.RestrictSizes(s.config.Options.AllowedSizes),
