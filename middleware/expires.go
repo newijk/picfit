@@ -17,7 +17,6 @@ func Expiry() gin.HandlerFunc {
 			c.Next()
 		}
 
-		// expiresStr, _ := params["expires"].(string)
 		expires, err := strconv.ParseInt(params["expires"].(string), 10, 64)
 		if err != nil {
 			c.String(http.StatusBadRequest, "Expires format must be integer seconds since (unix) epoch")
