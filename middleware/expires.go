@@ -8,29 +8,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Parse the expires query arg and return true if the expiration date is valid
+// Will always return true if query arg is not set
+// Will return true if the expiration time is after the curnnet time
+// Will return false otherwise
+func VerifyExpires(qs map[string]interface{}) bool {
+	_, expiresSet := qs["expires"]
+	if !expiresSet {
+		return true
+	}
+
+	expires, _ := strconv.ParseInt(qs["expires"].(string), 10, 64)
+	if time.Now().Unix() < expires {
+		return true
+	}
+
+	return false
+}
+
 func Expiry() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		params := c.MustGet("parameters").(map[string]interface{})
-
-		_, exists := params["expires"]
-		if !exists {
+		if VerifyExpires(c.MustGet("parameters").(map[string]interface{})) {
 			c.Next()
-		}
-
-		expires, err := strconv.ParseInt(params["expires"].(string), 10, 64)
-		if err != nil {
-			c.String(http.StatusBadRequest, "Expires format must be integer seconds since (unix) epoch")
-			c.Abort()
-		}
-
-		requestExpired := time.Now().Unix() > expires
-
-		if requestExpired {
-			c.String(http.StatusUnauthorized, "Request expired")
-			c.Abort()
 			return
 		}
-
-		c.Next()
+		c.String(http.StatusUnauthorized, "Request expired")
+		c.Abort()
 	}
 }
