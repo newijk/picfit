@@ -20,11 +20,7 @@ func VerifyExpires(qs map[string]interface{}) bool {
 	}
 
 	expires, _ := strconv.ParseInt(qs[constants.ExpiresParamName].(string), 10, 64)
-	if time.Now().Unix() < expires {
-		return true
-	}
-
-	return false
+	return time.Now().Unix() < expires
 }
 
 func Expiry() gin.HandlerFunc {
