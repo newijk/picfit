@@ -13,6 +13,8 @@ BIN = $(BIN_DIR)/picfit
 SSL_DIR = $(ROOT_DIR)/ssl
 APP_DIR = /go/src/github.com/thoas/picfit
 
+.PHONY: image
+
 export GO111MODULE=on
 
 test: unit
@@ -59,14 +61,24 @@ build-static:
 docker-build-static:
 	make build-static
 
-
 .PNONY: all test format
 
 docker-build:
 	@(echo "-> Preparing builder...")
-	@(docker build -t picfit-builder -f Dockerfile.build .)
+	@(podman build -t picfit-builder -f Dockerfile.build .)
 	@(mkdir -p $(BIN_DIR))
-	@(docker run --rm -v $(BIN_DIR):$(APP_DIR)/bin picfit-builder)
+	@(podman run --rm -v $(BIN_DIR):$(APP_DIR)/bin picfit-builder)
 
 lint:
 	golangci-lint run .
+
+image:
+	podman build --file Containerfile.familynet -t picfit:latest
+
+push-staging:
+	podman tag picfit:latest registry.gitlab.com/familynet/picfit:staging-latest
+	podman push picfit:staging-latest registry.gitlab.com/familynet/picfit:staging-latest
+
+push-production:
+	podman tag picfit:latest registry.gitlab.com/familynet/picfit:production-latest
+	podman push picfit:production-latest registry.gitlab.com/familynet/picfit:production-latest
