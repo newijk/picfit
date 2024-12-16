@@ -73,7 +73,7 @@ lint:
 	golangci-lint run .
 
 image:
-	podman build --file Containerfile.familynet -t picfit:latest
+	podman build --file Containerfile.familynet -t picfit:latest --arch amd64
 
 push-staging:
 	podman tag picfit:latest registry.gitlab.com/familynet/picfit:staging-latest
